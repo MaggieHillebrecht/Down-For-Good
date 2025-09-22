@@ -2,57 +2,63 @@ using UnityEngine;
 
 public class HandPickupAndRelease : MonoBehaviour
 {
-      public float shakeThreshold = 1000f; // how fast you need to move the mouse to release
-    public float throwForce = 10f;       // force applied when throwing
-
+    public float throwForceMultiplier = 1.5f; // Scales hand velocity into throw force
     private GameObject heldObject;
-    private Vector3 lastMousePos;
+    private MouseMovement handMovement;       // Reference to your MouseMovement script
 
     void Start()
     {
-        lastMousePos = Input.mousePosition;
+        handMovement = GetComponent<MouseMovement>();
+        if (handMovement == null)
+            Debug.LogError("HandPickupAndRelease requires MouseMovement on the same GameObject!");
     }
 
     void Update()
     {
-        // Track mouse velocity
-        Vector3 mouseDelta = Input.mousePosition - lastMousePos;
-        float mouseSpeed = mouseDelta.magnitude / Time.deltaTime;
-        lastMousePos = Input.mousePosition;
-
-        // Drop if shaking fast
-        if (heldObject != null && mouseSpeed > shakeThreshold)
+        // Drop held object with left mouse release
+        if (heldObject != null && Input.GetMouseButtonUp(0))
         {
-            DropBall(mouseDelta.normalized);
+            DropObject();
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ball") && heldObject == null)
+        if (other.CompareTag("Ball") && heldObject == null && Input.GetMouseButton(0))
         {
-            PickupBall(other.gameObject);
+            PickupObject(other.gameObject);
         }
     }
 
-    void PickupBall(GameObject ball)
+    private void PickupObject(GameObject obj)
     {
-        heldObject = ball;
+        heldObject = obj;
         heldObject.transform.SetParent(transform);
         heldObject.transform.localPosition = Vector3.zero;
+
         Rigidbody rb = heldObject.GetComponent<Rigidbody>();
-        if (rb != null) rb.isKinematic = true;
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
-    void DropBall(Vector3 throwDirection)
+    private void DropObject()
     {
+        if (heldObject == null) return;
+
         Rigidbody rb = heldObject.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = false;
             heldObject.transform.SetParent(null);
-            rb.AddForce(throwDirection * throwForce, ForceMode.VelocityChange);
+
+            // Apply throw using hand velocity from MouseMovement
+            rb.AddForce(handMovement.handVelocity * throwForceMultiplier, ForceMode.VelocityChange);
         }
+
         heldObject = null;
     }
 }
