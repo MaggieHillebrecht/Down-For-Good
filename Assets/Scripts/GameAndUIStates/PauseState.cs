@@ -4,7 +4,7 @@ public class PauseState : IState
 {
     public void OnEnter()
     {
-        //pause the game
+        Time.timeScale = 0f;
     }
 
     public void UpdateState()
@@ -14,6 +14,6 @@ public class PauseState : IState
 
     public void OnExit()
     {
-        //Resume the game
+        Time.timeScale = 1f;
     }
 }
