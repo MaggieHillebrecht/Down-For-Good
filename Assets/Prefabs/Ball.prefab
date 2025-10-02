@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2856665718033126088}
   - component: {fileID: 4792743560842708138}
   - component: {fileID: 9039879765854569806}
-  - component: {fileID: -1274173953024029052}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -140,18 +139,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-1274173953024029052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384116484724084602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36ef56af2f25c4361a19ece21f826e4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestTwo
-  tossForce: 5
-  sideForce: 1
-  upForce: 1
