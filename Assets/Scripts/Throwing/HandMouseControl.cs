@@ -3,43 +3,47 @@ using UnityEngine;
 public class HandMouseControl : MonoBehaviour
 {
     public Camera cam;
-    public Transform handTarget;  
-    public Transform elbowHint;   
-    public Transform clavicle_r;  // assign clavicle_r bone
+    public Transform handTarget;
+    public Transform elbowHint;
+    public Transform clavicle_r;
     public float followSpeed = 10f;
-    public float planeHeight = 1.0f;
-    public float minDistance = 0f; // prevents snapping
+    public float minDistance = 0.3f;
+    public float depth = 2.0f;
+    public float depthSpeed = 2f;
+    public bool isRightArm = true; // toggle if elbow bends wrong way
 
     void Update()
     {
+        // scroll wheel for depth
+        depth += Input.GetAxis("Mouse ScrollWheel") * depthSpeed;
+
+        // 3D target from mouse + depth
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new Plane(Vector3.up, new Vector3(0, planeHeight, 0));
+        Vector3 targetPos = ray.origin + ray.direction * depth;
 
-        if (plane.Raycast(ray, out float enter))
+        // clamp so it doesn’t collapse into the shoulder
+        Vector3 shoulderPos = clavicle_r.position;
+        if (Vector3.Distance(targetPos, shoulderPos) < minDistance)
         {
-            Vector3 hit = ray.GetPoint(enter);
+            targetPos = shoulderPos + (targetPos - shoulderPos).normalized * minDistance;
+        }
 
-            // --- clamp distance so arm doesn't collapse ---
-            Vector3 shoulderPos = clavicle_r.position;
-            if (Vector3.Distance(hit, shoulderPos) < minDistance)
-            {
-                hit = shoulderPos + (hit - shoulderPos).normalized * minDistance;
-            }
+        // follows the mouse and is in the direction of the target
+        handTarget.position = Vector3.Lerp(
+            handTarget.position,
+            targetPos,
+            Time.deltaTime * followSpeed
+        );
 
-            // --- move the hand target smoothly ---
-            handTarget.position = Vector3.Lerp(
-                handTarget.position, 
-                hit, 
-                Time.deltaTime * followSpeed
-            );
+        // elbow hint placement
+        if (elbowHint != null)
+        {
+            Vector3 toHand = (handTarget.position - shoulderPos).normalized;
+            Vector3 side = cam.transform.right;
 
-            // --- keep the elbow bent outward with a hint ---
-            if (elbowHint != null)
-            {
-                Vector3 toHand = (handTarget.position - shoulderPos).normalized;
-                Vector3 side = Vector3.Cross(Vector3.up, toHand); 
-                elbowHint.position = shoulderPos + toHand * 0.5f + side * 0.3f; 
-            }
+            if (isRightArm) side = -side;
+
+            elbowHint.position = shoulderPos + toHand * 0.5f + side * 0.3f;
         }
     }
 }
