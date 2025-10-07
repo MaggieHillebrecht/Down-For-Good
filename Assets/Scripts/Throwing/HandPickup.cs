@@ -1,24 +1,19 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class HandPickup : MonoBehaviour
 {
-    [SerializeField] private Transform holdPoint;  // Empty child where the ball will be held
-    [SerializeField] private float pickupRadius = 0.5f;
+    [SerializeField] private Transform holdPoint;     // Empty child where the ball will be held
     [SerializeField] private string ballTag = "Ball";
+    [SerializeField] private Animator anim;           // Drag your Animator here in the Inspector
+
+    [SerializeField] private float pickupRadius = 0.5f;
 
     private Rigidbody heldBall;
     private bool isHolding;
-    private Animator animation;
-
-    private void Start()
-    {
-        animation = GetComponent<Animator>();
-    }
 
     void OnTriggerEnter(Collider other)
     {
-        // Pick up if touching a ball and not already holding one
+        // Try to pick up if we’re not already holding something
         if (!isHolding && other.CompareTag(ballTag))
         {
             Rigidbody rb = other.attachedRigidbody;
@@ -31,13 +26,13 @@ public class HandPickup : MonoBehaviour
 
     void Update()
     {
-        // Keep the held ball following the holdPoint
+        // Keep the ball following the hold point
         if (isHolding && heldBall != null)
         {
             heldBall.MovePosition(holdPoint.position);
         }
 
-        // Drop on mouse click (temporary test)
+        // Right-click to drop (for testing)
         if (isHolding && Input.GetMouseButtonDown(1))
         {
             Drop();
@@ -52,15 +47,27 @@ public class HandPickup : MonoBehaviour
         heldBall.angularVelocity = Vector3.zero;
         heldBall.transform.position = holdPoint.position;
 
+        // Optional: parent the ball (to follow rotation)
+        heldBall.transform.SetParent(holdPoint, true);
+
         isHolding = true;
-        animation.SetBool("Grabbing", isHolding);
+
+        // Play grab animation
+        if (anim != null)
+        {
+            anim.SetTrigger("Grab");
+        }
     }
 
     private void Drop()
     {
-        heldBall.useGravity = true;
-        heldBall = null;
+        if (heldBall != null)
+        {
+            heldBall.useGravity = true;
+            heldBall.transform.SetParent(null);
+            heldBall = null;
+        }
+
         isHolding = false;
-        animation.SetBool("Grabbing", isHolding);
     }
 }
