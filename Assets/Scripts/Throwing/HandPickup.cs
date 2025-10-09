@@ -2,18 +2,44 @@ using UnityEngine;
 
 public class HandPickup : MonoBehaviour
 {
-    [SerializeField] private Transform holdPoint;     // Empty child where the ball will be held
+    [SerializeField] private Transform holdPoint; // Empty child where the ball will be held
     [SerializeField] private string ballTag = "Ball";
-    [SerializeField] private Animator anim;           // Drag your Animator here in the Inspector
-
+    [SerializeField] private Animator anim;
     [SerializeField] private float pickupRadius = 0.5f;
 
     private Rigidbody heldBall;
     private bool isHolding;
 
+    private Vector3 targetPosition;
+    private Quaternion targetRotation;
+
+    void LateUpdate()
+    {
+        // Cache the current hold point position (after Animator/RigBuilder)
+        if (isHolding && heldBall != null)
+        {
+            targetPosition = holdPoint.position;
+            targetRotation = holdPoint.rotation;
+        }
+
+        if (isHolding && Input.GetMouseButtonDown(0))
+        {
+            Drop();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // Move the held object via physics in sync with the last known hand position
+        if (isHolding && heldBall != null)
+        {
+            heldBall.MovePosition(targetPosition);
+            heldBall.MoveRotation(targetRotation);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
-        // Try to pick up if we’re not already holding something
         if (!isHolding && other.CompareTag(ballTag))
         {
             Rigidbody rb = other.attachedRigidbody;
@@ -24,39 +50,17 @@ public class HandPickup : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        // Keep the ball following the hold point
-        if (isHolding && heldBall != null)
-        {
-            heldBall.MovePosition(holdPoint.position);
-        }
-
-        // Right-click to drop (for testing)
-        if (isHolding && Input.GetMouseButtonDown(1))
-        {
-            Drop();
-        }
-    }
-
     private void Pickup(Rigidbody rb)
     {
         heldBall = rb;
         heldBall.useGravity = false;
         heldBall.linearVelocity = Vector3.zero;
         heldBall.angularVelocity = Vector3.zero;
-        heldBall.transform.position = holdPoint.position;
-
-        // Optional: parent the ball (to follow rotation)
-        heldBall.transform.SetParent(holdPoint, true);
 
         isHolding = true;
 
-        // Play grab animation
         if (anim != null)
-        {
             anim.SetTrigger("Grab");
-        }
     }
 
     private void Drop()
@@ -64,10 +68,13 @@ public class HandPickup : MonoBehaviour
         if (heldBall != null)
         {
             heldBall.useGravity = true;
-            heldBall.transform.SetParent(null);
+            heldBall.linearDamping = 0f;
+            heldBall.angularDamping = 0.05f;
             heldBall = null;
         }
 
         isHolding = false;
+        if (anim != null)
+            anim.SetTrigger("Release");
     }
 }
