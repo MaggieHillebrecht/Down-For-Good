@@ -5,7 +5,9 @@ public class BallThrowController : MonoBehaviour
     [Header("References")]
     [SerializeField] private HandPickup handPickup;
     [SerializeField] private Transform handTarget;
+    [SerializeField] private Camera cam;
     [SerializeField] private Animator anim;
+    [SerializeField] private TrajectoryLine trajectory;
 
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 5f;
@@ -14,12 +16,13 @@ public class BallThrowController : MonoBehaviour
 
     private float currentCharge = 0f;
     private bool isCharging = false;
+    private Vector3 aimDirection;
 
     void Update()
     {
         if (!handPickup.IsHoldingBall()) return;
 
-        // Start charging on right mouse down
+        // Start charging
         if (Input.GetMouseButtonDown(1))
         {
             isCharging = true;
@@ -28,14 +31,30 @@ public class BallThrowController : MonoBehaviour
                 anim.SetBool("Charging", true);
         }
 
-        // While holding right mouse button
-        if (isCharging && Input.GetMouseButton(1))
+        if (isCharging)
         {
+            // Build charge
             currentCharge += Time.deltaTime * chargeSpeed;
             currentCharge = Mathf.Clamp01(currentCharge);
+
+            // Update aim based on mouse
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                aimDirection = (hit.point - handTarget.position).normalized;
+            }
+            else
+            {
+                aimDirection = handTarget.forward;
+            }
+
+            // Show trajectory
+            float throwPower = Mathf.Lerp(minThrowForce, maxThrowForce, currentCharge);
+            Vector3 velocity = aimDirection * throwPower;
+            trajectory.ShowTrajectory(handTarget.position, velocity);
         }
 
-        // Release and throw
+        // Release throw
         if (isCharging && Input.GetMouseButtonUp(1))
         {
             isCharging = false;
@@ -45,21 +64,20 @@ public class BallThrowController : MonoBehaviour
                 anim.SetTrigger("Throw");
             }
 
+            trajectory.Hide();
             ThrowBall();
         }
     }
 
     private void ThrowBall()
     {
-        Rigidbody ball = handPickup.ReleaseBall(); // release from hand
+        Rigidbody ball = handPickup.ReleaseBall();
         if (ball == null) return;
 
         float throwPower = Mathf.Lerp(minThrowForce, maxThrowForce, currentCharge);
-
-        // Use hand forward direction to throw
-        Vector3 throwDirection = handTarget.forward;
+        Vector3 throwVelocity = aimDirection * throwPower;
 
         ball.useGravity = true;
-        ball.AddForce(throwDirection * throwPower, ForceMode.VelocityChange);
+        ball.linearVelocity = throwVelocity;
     }
 }
