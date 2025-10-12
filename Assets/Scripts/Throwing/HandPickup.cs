@@ -77,4 +77,26 @@ public class HandPickup : MonoBehaviour
         if (anim != null)
             anim.SetTrigger("Release");
     }
+
+    public bool IsHoldingBall()
+    {
+        return isHolding && heldBall != null;
+    }
+
+    public Rigidbody ReleaseBall()
+    {
+        if (!isHolding || heldBall == null)
+            return null;
+
+        Rigidbody released = heldBall;
+
+        heldBall.useGravity = true;
+        heldBall = null;
+        isHolding = false;
+
+        if (anim != null)
+            anim.SetTrigger("Release");
+
+        return released;
+    }
 }
