@@ -5,8 +5,6 @@ public class HandPickup : MonoBehaviour
     [SerializeField] private Transform holdPoint; // Empty child where the ball will be held
     [SerializeField] private string ballTag = "Ball";
     [SerializeField] private Animator anim;
-    [SerializeField] private float pickupRadius = 0.5f;
-
     private Rigidbody heldBall;
     private bool isHolding;
 
@@ -76,5 +74,27 @@ public class HandPickup : MonoBehaviour
         isHolding = false;
         if (anim != null)
             anim.SetTrigger("Release");
+    }
+
+    public bool IsHoldingBall()
+    {
+        return isHolding && heldBall != null;
+    }
+
+    public Rigidbody ReleaseBall()
+    {
+        if (!isHolding || heldBall == null)
+            return null;
+
+        Rigidbody released = heldBall;
+
+        heldBall.useGravity = true;
+        heldBall = null;
+        isHolding = false;
+
+        if (anim != null)
+            anim.SetTrigger("Release");
+
+        return released;
     }
 }
