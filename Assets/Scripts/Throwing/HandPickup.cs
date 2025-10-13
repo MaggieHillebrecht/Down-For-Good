@@ -5,8 +5,6 @@ public class HandPickup : MonoBehaviour
     [SerializeField] private Transform holdPoint; // Empty child where the ball will be held
     [SerializeField] private string ballTag = "Ball";
     [SerializeField] private Animator anim;
-    [SerializeField] private float pickupRadius = 0.5f;
-
     private Rigidbody heldBall;
     private bool isHolding;
 
