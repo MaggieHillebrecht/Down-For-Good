@@ -36,14 +36,14 @@ public class BallThrowController : MonoBehaviour
                 handTransparency.SetVisible(false);
 
             if (crosshair != null)
-                crosshair.SetVisible(true); // show crosshair when charging
+                crosshair.SetVisible(true);
         }
 
         // While charging (holding right click)
         if (isCharging && Input.GetMouseButton(1))
         {
             currentCharge += Time.deltaTime * chargeSpeed;
-            currentCharge = Mathf.Clamp01(currentCharge);
+            currentCharge = Mathf.Clamp01(currentCharge); // only 0 to 1 value allowed for the charge
 
             // Raycast to determine aim target
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -74,7 +74,7 @@ public class BallThrowController : MonoBehaviour
                 handTransparency.SetVisible(true);
 
             if (crosshair != null)
-                crosshair.SetVisible(false); // hide crosshair after throw
+                crosshair.SetVisible(false);
 
             ThrowBall();
         }
