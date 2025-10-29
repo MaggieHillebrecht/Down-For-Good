@@ -1,18 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class BasicArcadeGameLogic : MonoBehaviour
 {
-    public static BasicArcadeGameLogic Instance; // Created a Singleton for easy access
+    public static BasicArcadeGameLogic Instance;
 
     [Header("Score Settings")]
-    [SerializeField] private int scorePerPin = 1;
+    [SerializeField] private int scoreGoal = 20;
+
+    [Header("Timer Settings")]
+    [SerializeField] private float roundDuration = 15f; 
+    [SerializeField] private Text timerText;
 
     [Header("UI References")]
-    [SerializeField] private Text scoreText; 
+    [SerializeField] private Text scoreText;
 
     private int currentScore = 0;
+    private float timer = 0f;
     private bool isGameActive = false;
+
+    public event Action OnRoundSuccess;
+    public event Action OnRoundFailed;
 
     void Awake()
     {
@@ -25,18 +34,34 @@ public class BasicArcadeGameLogic : MonoBehaviour
     void Start()
     {
         UpdateScoreUI();
+        UpdateTimerUI();
     }
 
     public void StartGame()
     {
         currentScore = 0;
+        timer = roundDuration;
         isGameActive = true;
+
         UpdateScoreUI();
+        UpdateTimerUI();
     }
 
-    public void EndGame()
+    public void EndGameByTimer()
     {
+        if (!isGameActive) return;
         isGameActive = false;
+
+        if (currentScore >= scoreGoal)
+        {
+            Debug.Log("Round success! (timer ended)");
+            OnRoundSuccess?.Invoke();
+        }
+        else
+        {
+            Debug.Log("Round failed! (timer ended)");
+            OnRoundFailed?.Invoke();
+        }
     }
 
     public void AddScore(int amount)
@@ -53,18 +78,15 @@ public class BasicArcadeGameLogic : MonoBehaviour
             scoreText.text = $"Score: {currentScore}";
     }
 
-    // Optional for colored pin multipliers later
-    public void AddColoredPinScore(string colorTag)
+    private void UpdateTimerUI()
     {
-        if (!isGameActive) return;
+        if (timerText != null)
+            timerText.text = $"Time: {Mathf.CeilToInt(timer)}";
+    }
 
-        int points = colorTag switch
-        {
-            "Pin" => scorePerPin * 3,
-            "BluePin" => scorePerPin * 2,
-            _ => scorePerPin
-        };
-
-        AddScore(points);
+    public void ExitShopAndStartNextRound()
+    {
+        Debug.Log("Starting next round...");
+        StartGame();
     }
 }

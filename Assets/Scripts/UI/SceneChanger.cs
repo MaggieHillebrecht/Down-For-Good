@@ -7,7 +7,7 @@ public class SceneChanger : MonoBehaviour
     [SerializeField] private Animation anim; 
     [SerializeField] private string nextScene = "Game";
 
-    public void OnTestOneButtonClick()
+    public void OnMainGameButtonClick()
     {
         if (anim != null && anim.clip != null)
         {
@@ -20,7 +20,7 @@ public class SceneChanger : MonoBehaviour
         }
     }
 
-    public void OnBackSpaceClick()
+    public void OnMainMenuClick()
     {
         SceneManager.LoadScene("FrontEndMenu");
     }

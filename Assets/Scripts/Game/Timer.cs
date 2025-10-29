@@ -26,7 +26,7 @@ public class Timer : MonoBehaviour
         {
             timeRemaining = 0f;
             timerRunning = false;
-            BasicArcadeGameLogic.Instance.EndGame();
+            BasicArcadeGameLogic.Instance.EndGameByTimer();
         }
 
         UpdateTimerUI();
