@@ -17,22 +17,22 @@ public class HandMouseControl : MonoBehaviour
         // calculate how far the hand starts from the camera
         // so it stays at that depth during play
         Vector3 toHand = handTarget.position - cam.transform.position;
-        startingDepth = Vector3.Dot(toHand, cam.transform.forward);
+        startingDepth = Vector3.Dot( toHand, cam.transform.forward );
     }
 
     void Update()
     {
         // Ray from mouse into 3D space
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = cam.ScreenPointToRay( Input.mousePosition );
 
         // Use the starting depth to project the mouse into 3D
         Vector3 targetPos = ray.origin + ray.direction * startingDepth;
 
         // Clamp distance so arm doesn’t collapse
         Vector3 shoulderPos = clavicle_r.position;
-        if (Vector3.Distance(targetPos, shoulderPos) < minDistance)
+        if (Vector3.Distance( targetPos, shoulderPos ) < minDistance )
         {
-            targetPos = shoulderPos + (targetPos - shoulderPos).normalized * minDistance;
+            targetPos = shoulderPos + ( targetPos - shoulderPos ).normalized * minDistance;
         }
 
         // Smoothly move toward target

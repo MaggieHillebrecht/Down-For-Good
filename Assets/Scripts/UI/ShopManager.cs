@@ -13,23 +13,24 @@ public class ShopManager : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(SubscribeWhenReady());
+        StartCoroutine( SubscribeWhenReady() );
     }
 
     private IEnumerator SubscribeWhenReady()
     {
-        while (BasicArcadeGameLogic.Instance == null)
+        while ( BasicArcadeGameLogic.Instance == null )
+        {
             yield return null;
+        }
 
         BasicArcadeGameLogic.Instance.OnRoundSuccess += HandleRoundSuccess;
         BasicArcadeGameLogic.Instance.OnRoundFailed += HandleRoundFailed;
-        Debug.Log("ShopManager: Successfully subscribed to game events");
     }
 
     private void OnDestroy()
     {
         // unsubscribes when destroyed
-        if (BasicArcadeGameLogic.Instance != null)
+        if ( BasicArcadeGameLogic.Instance != null )
         {
             BasicArcadeGameLogic.Instance.OnRoundSuccess -= HandleRoundSuccess;
             BasicArcadeGameLogic.Instance.OnRoundFailed -= HandleRoundFailed;
@@ -38,88 +39,87 @@ public class ShopManager : MonoBehaviour
 
     private void HandleRoundSuccess()
     {
-        Debug.Log("ShopManager: Round success — transitioning to shop...");
-        StartCoroutine(PlayCameraAnimAndOpenShop());
+        StartCoroutine( PlayCameraAnimAndOpenShop() );
     }
 
     private void HandleRoundFailed()
     {
-        Debug.Log("Round failed — showing LoserScreen!");
-        if (hudUI != null) hudUI.SetActive(false);
-        if (loserScreen != null) loserScreen.SetActive(true);
+        if ( hudUI != null ) hudUI.SetActive( false );
+        if ( loserScreen != null ) loserScreen.SetActive( true );
     }
 
     private IEnumerator PlayCameraAnimAndOpenShop()
     {
         // Hide HUD
-        if (hudUI != null)
-            hudUI.SetActive(false);
+        if ( hudUI != null )
+            hudUI.SetActive( false );
 
         // Activate the shop before fading
-        if (shopFader != null)
-            shopFader.gameObject.SetActive(true);
+        if ( shopFader != null )
+            shopFader.gameObject.SetActive( true );
 
         // Play camera animation
-        if (cameraAnimator != null && !string.IsNullOrEmpty(lookToShopAnim))
+        if ( cameraAnimator != null && !string.IsNullOrEmpty( lookToShopAnim ) )
         {
-            cameraAnimator.Play(lookToShopAnim);
-            float animLength = GetAnimationClipLength(lookToShopAnim);
-            yield return new WaitForSeconds(animLength);
+            cameraAnimator.Play( lookToShopAnim );
+            float animLength = GetAnimationClipLength( lookToShopAnim );
+            yield return new WaitForSeconds( animLength );
         }
 
         // Fade in the shop UI
-        if (shopFader != null)
+        if ( shopFader != null )
             shopFader.FadeIn();
     }
 
     public IEnumerator ReturnFromShop()
     {
         // Fade out the shop UI
-        if (shopFader != null)
+        if ( shopFader != null )
             shopFader.FadeOut();
 
-        if (shopFader != null)
-            yield return new WaitForSeconds(shopFader.fadeDuration);
-
-        // Play camera animation back to the game
-        if (cameraAnimator != null && !string.IsNullOrEmpty(lookToGameAnim))
+        if ( shopFader != null )
         {
-            cameraAnimator.Play(lookToGameAnim);
-            float animLength = GetAnimationClipLength(lookToGameAnim);
-            yield return new WaitForSeconds(animLength);
+            yield return new WaitForSeconds( shopFader.fadeDuration );
         }
 
-        if (timerInstance != null)
+        // Play camera animation back to the game
+        if ( cameraAnimator != null && !string.IsNullOrEmpty( lookToGameAnim ) )
+        {
+            cameraAnimator.Play( lookToGameAnim );
+            float animLength = GetAnimationClipLength( lookToGameAnim );
+            yield return new WaitForSeconds( animLength );
+        }
+
+        if ( timerInstance != null )
             timerInstance.StartTimer();
 
-        // Hide shop UI completely
-        if (shopFader != null)
-            shopFader.gameObject.SetActive(false);
+        if ( shopFader != null )
+            shopFader.gameObject.SetActive( false );
 
-        // Show HUD again
-        if (hudUI != null)
-            hudUI.SetActive(true);
+        if ( hudUI != null )
+            hudUI.SetActive( true );
 
-        // Start the next round
         BasicArcadeGameLogic.Instance.StartGame();
     }
 
     public void ExitShopAndReturnToGame()
     {
-        StartCoroutine(ReturnFromShop());
+        StartCoroutine( ReturnFromShop() );
     }
 
-    private float GetAnimationClipLength(string clipName)
+    private float GetAnimationClipLength( string clipName )
     {
-        if (cameraAnimator == null) return 0f;
-
-        foreach (var clip in cameraAnimator.runtimeAnimatorController.animationClips)
+        if ( cameraAnimator == null )
         {
-            if (clip.name == clipName)
+            return 0f;    
+        } 
+
+        foreach ( var clip in cameraAnimator.runtimeAnimatorController.animationClips )
+        {
+            if ( clip.name == clipName )
                 return clip.length;
         }
 
-        Debug.LogWarning($"Animation clip '{clipName}' not found.");
         return 0f;
     }
     

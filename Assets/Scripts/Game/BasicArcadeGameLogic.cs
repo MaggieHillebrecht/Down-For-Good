@@ -26,9 +26,13 @@ public class BasicArcadeGameLogic : MonoBehaviour
     void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+        }
         else
-            Destroy(gameObject);
+        {
+            Destroy( gameObject );
+        }
     }
 
     void Start()
@@ -49,24 +53,31 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
     public void EndGameByTimer()
     {
-        if (!isGameActive) return;
-        isGameActive = false;
-
-        if (currentScore >= scoreGoal)
+        if ( !isGameActive )
         {
-            Debug.Log("Round success! (timer ended)");
+            return;
+        }
+        else
+        {
+            isGameActive = false;
+        }
+
+        if ( currentScore >= scoreGoal )
+        {
             OnRoundSuccess?.Invoke();
         }
         else
         {
-            Debug.Log("Round failed! (timer ended)");
             OnRoundFailed?.Invoke();
         }
     }
 
-    public void AddScore(int amount)
+    public void AddScore( int amount )
     {
-        if (!isGameActive) return;
+        if ( !isGameActive )
+        {
+            return;
+        }
 
         currentScore += amount;
         UpdateScoreUI();
@@ -74,19 +85,18 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        if (scoreText != null)
+        if ( scoreText != null )
             scoreText.text = $"Score: {currentScore}";
     }
 
     private void UpdateTimerUI()
     {
-        if (timerText != null)
-            timerText.text = $"Time: {Mathf.CeilToInt(timer)}";
+        if ( timerText != null )
+            timerText.text = $"Time: {Mathf.CeilToInt( timer )}";
     }
 
     public void ExitShopAndStartNextRound()
     {
-        Debug.Log("Starting next round...");
         StartGame();
     }
 }

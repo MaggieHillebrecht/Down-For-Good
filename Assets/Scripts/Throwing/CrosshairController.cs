@@ -17,20 +17,20 @@ public class CrosshairController : MonoBehaviour
         crosshairImage.enabled = false;
     }
 
-    public void SetVisible(bool visible)
+    public void SetVisible( bool visible )
     {
         isVisible = visible;
         crosshairImage.enabled = visible;
     }
 
-    public void UpdatePosition(Vector3 worldTarget)
+    public void UpdatePosition( Vector3 worldTarget )
     {
-        if (!isVisible) return;
+        if ( !isVisible ) return;
 
-        // Convert world target to screen space
-        targetScreenPos = cam.WorldToScreenPoint(worldTarget);
+        // converts world target to screen space
+        targetScreenPos = cam.WorldToScreenPoint( worldTarget );
 
-        // Smooth follow movement
+        // allows for smooth follow movement
         rectTransform.position = Vector3.Lerp(
             rectTransform.position,
             targetScreenPos,

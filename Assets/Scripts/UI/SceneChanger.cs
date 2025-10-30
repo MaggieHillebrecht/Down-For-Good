@@ -9,20 +9,20 @@ public class SceneChanger : MonoBehaviour
 
     public void OnMainGameButtonClick()
     {
-        if (anim != null && anim.clip != null)
+        if ( anim != null && anim.clip != null )
         {
             anim.Play();
-            StartCoroutine(WaitAndLoadScene(anim.clip.length));
+            StartCoroutine( WaitAndLoadScene( anim.clip.length ) );
         }
         else
         {
-            SceneManager.LoadScene(nextScene);
+            SceneManager.LoadScene( nextScene );
         }
     }
 
     public void OnMainMenuClick()
     {
-        SceneManager.LoadScene("FrontEndMenu");
+        SceneManager.LoadScene( "FrontEndMenu" );
     }
 
     public void OnQuitClick()
@@ -30,9 +30,9 @@ public class SceneChanger : MonoBehaviour
         Application.Quit();
     }
 
-    private IEnumerator WaitAndLoadScene(float delay)
+    private IEnumerator WaitAndLoadScene( float delay )
     {
-        yield return new WaitForSeconds(delay);
-        SceneManager.LoadScene(nextScene);
+        yield return new WaitForSeconds( delay );
+        SceneManager.LoadScene( nextScene );
     }
 }
