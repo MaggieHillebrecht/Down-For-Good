@@ -4,10 +4,10 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] private float gameDuration = 15f; 
+    [SerializeField] private float gameDuration = 15f;
 
     [Header("UI References")]
-    [SerializeField] private Text timerText; 
+    [SerializeField] private Text timerText;
 
     private float timeRemaining;
     private bool timerRunning = false;
@@ -20,12 +20,10 @@ public class Timer : MonoBehaviour
     void Update()
     {
         if (!timerRunning)
-        {
             return;
-        }
 
         timeRemaining -= Time.deltaTime;
-        if ( timeRemaining <= 0f )
+        if (timeRemaining <= 0f)
         {
             timeRemaining = 0f;
             timerRunning = false;
@@ -44,7 +42,7 @@ public class Timer : MonoBehaviour
 
     private void UpdateTimerUI()
     {
-        if ( timerText != null )
-            timerText.text = $"Time: {Mathf.CeilToInt( timeRemaining )}";
+        if (timerText != null)
+            timerText.text = $"Time: {Mathf.CeilToInt(timeRemaining)}";
     }
 }

@@ -2023,6 +2023,96 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &440141252
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 440141253}
+  - component: {fileID: 440141255}
+  - component: {fileID: 440141254}
+  m_Layer: 5
+  m_Name: TempInstructions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &440141253
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440141252}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1285374895}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -311.1, y: 67.235}
+  m_SizeDelta: {x: 160, y: 154.47}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &440141254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440141252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Hover over ball to pick up
+
+
+    Two click hold on laptop
+
+    charges
+    the throw
+
+
+    Letting go will throw ball
+
+    wherever the cross hair is'
+--- !u!222 &440141255
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440141252}
+  m_CullTransparentMesh: 1
 --- !u!1 &481640381 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8892832158156068285, guid: 255080f7a6760473d8f7b5b0a20677c6, type: 3}
@@ -4693,6 +4783,7 @@ GameObject:
   - component: {fileID: 1126909178}
   - component: {fileID: 1126909180}
   - component: {fileID: 1126909179}
+  - component: {fileID: 1126909181}
   m_Layer: 5
   m_Name: Score
   m_TagString: Untagged
@@ -4761,6 +4852,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1126909177}
   m_CullTransparentMesh: 1
+--- !u!114 &1126909181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126909177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f25a5fa5d24e4757ab83d5c436b0500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  scoreText: {fileID: 1126909179}
 --- !u!1 &1131637600 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000013210641910, guid: ecc15abaa2d4963428bdf7fc9eb09410, type: 3}
@@ -5376,6 +5480,7 @@ RectTransform:
   - {fileID: 237824557}
   - {fileID: 1514325404}
   - {fileID: 2024778064}
+  - {fileID: 440141253}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7760,6 +7865,7 @@ MonoBehaviour:
   hudUI: {fileID: 1514325403}
   loserScreen: {fileID: 2024778063}
   cameraAnimator: {fileID: 330585548}
+  timerInstance: {fileID: 592332600}
   lookToShopAnim: LookToShop
   lookToGameAnim: LookToGame
 --- !u!4 &1869556975
@@ -8265,9 +8371,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicArcadeGameLogic
   scoreGoal: 5
-  roundDuration: 15
-  timerText: {fileID: 592332598}
-  scoreText: {fileID: 1126909179}
 --- !u!4 &2061323898
 Transform:
   m_ObjectHideFlags: 0

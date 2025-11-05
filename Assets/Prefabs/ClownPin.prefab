@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3203546215104589422}
   - component: {fileID: 4130735496279903975}
   - component: {fileID: 7321301935307660657}
-  - component: {fileID: 7089882322644756002}
+  - component: {fileID: 834991413229351822}
   m_Layer: 0
   m_Name: ClownPin
   m_TagString: Pin
@@ -140,7 +140,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7089882322644756002
+--- !u!114 &834991413229351822
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,6 +149,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4982757621344154475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c701455365f1d4ef999282b2adbed17c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4150b073b7b12478184b4daa96fc8ff7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pin
+  m_EditorClassIdentifier: Assembly-CSharp::Pins
+  scoreValue: 1

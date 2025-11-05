@@ -27,20 +27,20 @@ public class BallThrowController : MonoBehaviour
         }
 
         // Start charging (right mouse down)
-            if ( Input.GetMouseButtonDown(1) )
-            {
-                isCharging = true;
-                currentCharge = 0f;
+        if ( Input.GetMouseButtonDown(1) )
+        {
+            isCharging = true;
+            currentCharge = 0f;
 
-                if ( anim != null )
-                    anim.SetBool( "Charging", true );
+            if ( anim != null )
+                anim.SetBool( "Charging", true );
 
-                if ( handTransparency != null )
-                    handTransparency.SetVisible( false );
- 
-                if ( crosshair != null )
-                    crosshair.SetVisible( true );
-            }
+            if ( handTransparency != null )
+                handTransparency.SetVisible( false );
+
+            if ( crosshair != null )
+                crosshair.SetVisible( true );
+        }
 
         // While charging (holding right click)
         if ( isCharging && Input.GetMouseButton(1) )

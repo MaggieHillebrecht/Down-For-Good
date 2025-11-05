@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 
 public class BasicArcadeGameLogic : MonoBehaviour
@@ -9,15 +8,6 @@ public class BasicArcadeGameLogic : MonoBehaviour
     [Header("Score Settings")]
     [SerializeField] private int scoreGoal = 20;
 
-    [Header("Timer Settings")]
-    [SerializeField] private float roundDuration = 15f; 
-    [SerializeField] private Text timerText;
-
-    [Header("UI References")]
-    [SerializeField] private Text scoreText;
-
-    private int currentScore = 0;
-    private float timer = 0f;
     private bool isGameActive = false;
 
     public event Action OnRoundSuccess;
@@ -31,38 +21,24 @@ public class BasicArcadeGameLogic : MonoBehaviour
         }
         else
         {
-            Destroy( gameObject );
+            Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-        UpdateScoreUI();
-        UpdateTimerUI();
     }
 
     public void StartGame()
     {
-        currentScore = 0;
-        timer = roundDuration;
         isGameActive = true;
-
-        UpdateScoreUI();
-        UpdateTimerUI();
+        ScoreManager.Instance.ResetScore();
     }
 
     public void EndGameByTimer()
     {
-        if ( !isGameActive )
-        {
+        if (!isGameActive)
             return;
-        }
-        else
-        {
-            isGameActive = false;
-        }
 
-        if ( currentScore >= scoreGoal )
+        isGameActive = false;
+
+        if (ScoreManager.Instance.CurrentScore >= scoreGoal)
         {
             OnRoundSuccess?.Invoke();
         }
@@ -72,27 +48,9 @@ public class BasicArcadeGameLogic : MonoBehaviour
         }
     }
 
-    public void AddScore( int amount )
+    public bool IsGameActive()
     {
-        if ( !isGameActive )
-        {
-            return;
-        }
-
-        currentScore += amount;
-        UpdateScoreUI();
-    }
-
-    private void UpdateScoreUI()
-    {
-        if ( scoreText != null )
-            scoreText.text = $"Score: {currentScore}";
-    }
-
-    private void UpdateTimerUI()
-    {
-        if ( timerText != null )
-            timerText.text = $"Time: {Mathf.CeilToInt( timer )}";
+        return isGameActive;
     }
 
     public void ExitShopAndStartNextRound()
