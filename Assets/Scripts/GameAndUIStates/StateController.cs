@@ -2,26 +2,44 @@ using UnityEngine;
 
 public interface IState
 {
-    public void OnEnter();
-
-    public void UpdateState();
-
-    public void OnExit();
+    void OnEnter();
+    void UpdateState();
+    void OnExit();
 }
 
 public class StateController : MonoBehaviour
 {
-    IState currentState;
+    [Header("UI References")]
+    [SerializeField] private GameObject pauseMenuUI;
+
+    private IState currentState;
+
+    void Start()
+    {
+        // Start in Play mode
+        ChangeState(new PlayState(this, pauseMenuUI));
+    }
 
     void Update()
     {
-        currentState.UpdateState();
+        currentState?.UpdateState();
     }
 
-    public void ChangeState( IState newState )
+    public void ChangeState(IState newState)
     {
-        currentState.OnExit();
+        currentState?.OnExit();
         currentState = newState;
-        currentState.OnEnter();
+        currentState?.OnEnter();
+    }
+
+    // Called by buttons
+    public void PauseGame()
+    {
+        ChangeState(new PauseState(this, pauseMenuUI));
+    }
+
+    public void ResumeGame()
+    {
+        ChangeState(new PlayState(this, pauseMenuUI));
     }
 }
