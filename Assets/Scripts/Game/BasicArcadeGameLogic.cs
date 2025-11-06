@@ -5,9 +5,6 @@ public class BasicArcadeGameLogic : MonoBehaviour
 {
     public static BasicArcadeGameLogic Instance;
 
-    [Header("Score Settings")]
-    [SerializeField] private int scoreGoal = 20;
-
     private bool isGameActive = false;
 
     public event Action OnRoundSuccess;
@@ -38,7 +35,7 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
         isGameActive = false;
 
-        if (ScoreManager.Instance.CurrentScore >= scoreGoal)
+        if (ScoreManager.Instance.CurrentScore >= ScoreManager.Instance.ScoreGoal)
         {
             OnRoundSuccess?.Invoke();
         }
@@ -55,6 +52,7 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
     public void ExitShopAndStartNextRound()
     {
+        ScoreManager.Instance.StartNextRound();
         StartGame();
     }
 }

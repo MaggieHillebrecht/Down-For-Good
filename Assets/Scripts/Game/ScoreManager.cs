@@ -8,7 +8,14 @@ public class ScoreManager : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Text scoreText;
 
+    [Header("Score Goal Settings")]
+    [SerializeField] private int initialScoreGoal = 5; // starting goal
+    [SerializeField] private int scoreGoalIncrement = 2; // how much goal increases each round
+
     public int CurrentScore { get; private set; } = 0;
+    private int scoreGoal;
+
+    public int ScoreGoal => scoreGoal; 
 
     void Awake()
     {
@@ -20,6 +27,8 @@ public class ScoreManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        scoreGoal = initialScoreGoal; // initialize first round
     }
 
     public void AddScore(int amount)
@@ -37,9 +46,17 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreUI();
     }
 
+    public void StartNextRound()
+    {
+        // Increase goal for next round
+        scoreGoal += scoreGoalIncrement;
+        ResetScore();
+    }
+
     private void UpdateScoreUI()
     {
         if (scoreText != null)
-            scoreText.text = $"Score: {CurrentScore}";
+            scoreText.text = $"Score: {CurrentScore} / {scoreGoal}";
     }
+
 }

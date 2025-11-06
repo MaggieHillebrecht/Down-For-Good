@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BallThrowController : MonoBehaviour
 {
@@ -13,88 +15,129 @@ public class BallThrowController : MonoBehaviour
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 5f;
     [SerializeField] private float maxThrowForce = 25f;
-    [SerializeField] private float chargeSpeed = 10f;
+    [SerializeField] private float chargeSpeed = .5f; 
 
-    private float currentCharge = 0f;
+    [Header("UI")]
+    [SerializeField] private Slider chargeSlider; 
+
+    private float currentCharge = 0f; 
     private bool isCharging = false;
     private Vector3 aimDirection;
+    private int chargeDirection = 1; // 1 = increasing, -1 = decreasing
 
     void Update()
     {
-        if ( !handPickup.IsHoldingBall() )
-        {
+        if (!handPickup.IsHoldingBall())
             return;
-        }
 
-        // Start charging (right mouse down)
-        if ( Input.GetMouseButtonDown(1) )
+        HandleCharging();
+        UpdateChargeUI();
+    }
+
+    private void HandleCharging()
+    {
+        // Start charging
+        if (Input.GetMouseButtonDown(1))
         {
             isCharging = true;
             currentCharge = 0f;
+            chargeDirection = 1;
 
-            if ( anim != null )
-                anim.SetBool( "Charging", true );
-
-            if ( handTransparency != null )
-                handTransparency.SetVisible( false );
-
-            if ( crosshair != null )
-                crosshair.SetVisible( true );
+            anim?.SetBool("Charging", true);
+            handTransparency?.SetVisible(false);
+            crosshair?.SetVisible(true);
         }
 
-        // While charging (holding right click)
-        if ( isCharging && Input.GetMouseButton(1) )
+        // Charging
+        if (isCharging && Input.GetMouseButton(1))
         {
-            if ( anim != null )
-                anim.SetBool( "Charging", true );
-                
-            currentCharge += Time.deltaTime * chargeSpeed;
-            currentCharge = Mathf.Clamp01( currentCharge ); // only 0 to 1 value allowed for the charge
+            // Ping-pong logic
+            currentCharge += chargeDirection * chargeSpeed * Time.deltaTime;
 
-            // Raycast to determine aim target
-            Ray ray = cam.ScreenPointToRay( Input.mousePosition );
-            if ( Physics.Raycast( ray, out RaycastHit hit ) )
+            if (currentCharge >= 1f)
             {
-                aimDirection = ( hit.point - handTarget.position ).normalized;
-                crosshair.UpdatePosition( hit.point );
+                currentCharge = 1f;
+                chargeDirection = -1; // start decreasing
             }
+            else if (currentCharge <= 0f)
+            {
+                currentCharge = 0f;
+                chargeDirection = 1; // start increasing
+            }
+
+            // Aim raycast
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+                aimDirection = (hit.point - handTarget.position).normalized;
             else
-            {
                 aimDirection = handTarget.forward;
-                crosshair.UpdatePosition( handTarget.position + aimDirection * 10f );
-            }
+
+            crosshair?.UpdatePosition(handTarget.position + aimDirection * 10f);
         }
 
-        // Release throw (right mouse up)
-        if ( isCharging && Input.GetMouseButtonUp(1) )
+        // Release throw
+        if (isCharging && Input.GetMouseButtonUp(1))
         {
             isCharging = false;
 
-            if ( anim != null )
-            {
-                anim.SetBool( "Charging", false );
-                anim.SetTrigger( "Throw" );
-            }
+            handTransparency?.SetVisible(true);
+            crosshair?.SetVisible(false);
 
-            if ( handTransparency != null )
-                handTransparency.SetVisible( true );
-
-            if ( crosshair != null )
-                crosshair.SetVisible( false );
-
+            anim?.SetBool("Charging", false);
+            StartCoroutine(HandleThrowAnimation());
             ThrowBall();
+
+            currentCharge = 0f; // reset
+            chargeDirection = 1;
+        }
+    }
+
+    private void UpdateChargeUI()
+    {
+        if (chargeSlider != null)
+        {
+            chargeSlider.value = currentCharge; // Slider value 0 → 1
         }
     }
 
     private void ThrowBall()
     {
         Rigidbody ball = handPickup.ReleaseBall();
-        if ( ball == null ) return;
+        if (ball == null) return;
 
-        float throwPower = Mathf.Lerp( minThrowForce, maxThrowForce, currentCharge );
+        float throwPower = Mathf.Lerp(minThrowForce, maxThrowForce, currentCharge);
         Vector3 throwVelocity = aimDirection * throwPower;
 
         ball.useGravity = true;
         ball.linearVelocity = throwVelocity;
+    }
+
+    private IEnumerator HandleThrowAnimation()
+    {
+        anim.SetBool("Charging", true);
+        anim.Update(0f); // forces Animator to evaluate immediately
+
+        yield return null; // let one frame pass
+
+        anim.ResetTrigger("Throw");
+        anim.SetTrigger("Throw");
+
+        const int maxFramesToWait = 10;
+        int frames = 0;
+        int throwHash = Animator.StringToHash("ThrowingAnimation");
+
+        while (frames < maxFramesToWait)
+        {
+            if (anim.IsInTransition(0))
+            {
+                var next = anim.GetNextAnimatorStateInfo(0);
+                if (next.shortNameHash == throwHash || next.IsName("ThrowingAnimation"))
+                    break;
+            }
+            frames++;
+            yield return null;
+        }
+
+        anim.SetBool("Charging", false);
     }
 }
