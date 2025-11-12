@@ -10,10 +10,11 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Timer timerInstance;
     [SerializeField] private string lookToShopAnim = "LookToShop";
     [SerializeField] private string lookToGameAnim = "LookToGame";
+    [SerializeField] private HandPickup playerHand;
 
     private void OnEnable()
     {
-        StartCoroutine( SubscribeWhenReady() );
+        StartCoroutine(SubscribeWhenReady());
     }
 
     private IEnumerator SubscribeWhenReady()
@@ -50,24 +51,30 @@ public class ShopManager : MonoBehaviour
 
     private IEnumerator PlayCameraAnimAndOpenShop()
     {
+        // Destroy ball in hand if any
+        if (playerHand != null && playerHand.IsHoldingBall())
+        {
+            playerHand.DestroyHeldBall();
+        }
+
         // Hide HUD
-        if ( hudUI != null )
-            hudUI.SetActive( false );
+        if (hudUI != null)
+            hudUI.SetActive(false);
 
         // Activate the shop before fading
-        if ( shopFader != null )
-            shopFader.gameObject.SetActive( true );
+        if (shopFader != null)
+            shopFader.gameObject.SetActive(true);
 
         // Play camera animation
-        if ( cameraAnimator != null && !string.IsNullOrEmpty( lookToShopAnim ) )
+        if (cameraAnimator != null && !string.IsNullOrEmpty(lookToShopAnim))
         {
-            cameraAnimator.Play( lookToShopAnim );
-            float animLength = GetAnimationClipLength( lookToShopAnim );
-            yield return new WaitForSeconds( animLength );
+            cameraAnimator.Play(lookToShopAnim);
+            float animLength = GetAnimationClipLength(lookToShopAnim);
+            yield return new WaitForSeconds(animLength);
         }
 
         // Fade in the shop UI
-        if ( shopFader != null )
+        if (shopFader != null)
             shopFader.FadeIn();
     }
 

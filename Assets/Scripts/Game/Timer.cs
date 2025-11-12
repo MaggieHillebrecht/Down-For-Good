@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] private float gameDuration = 15f;
+    [SerializeField] private float gameDuration = 30f;
 
     [Header("UI References")]
     [SerializeField] private Text timerText;

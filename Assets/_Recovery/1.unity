@@ -8480,7 +8480,6 @@ MonoBehaviour:
   timerInstance: {fileID: 592332600}
   lookToShopAnim: LookToShop
   lookToGameAnim: LookToGame
-  playerHand: {fileID: 512271317}
 --- !u!4 &1869556975
 Transform:
   m_ObjectHideFlags: 0

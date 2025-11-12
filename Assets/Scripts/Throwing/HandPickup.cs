@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HandPickup : MonoBehaviour
 {
-    [SerializeField] private Transform holdPoint; // Empty child where the ball will be held
+    [SerializeField] private Transform holdPoint; 
     [SerializeField] private string ballTag = "Ball";
     [SerializeField] private Animator anim;
     private Rigidbody heldBall;
@@ -13,8 +13,7 @@ public class HandPickup : MonoBehaviour
 
     void LateUpdate()
     {
-        // cache the current hold point position (after Animator/RigBuilder)
-        if ( isHolding && heldBall != null )
+        if (isHolding && heldBall != null)
         {
             targetPosition = holdPoint.position;
             targetRotation = holdPoint.rotation;
@@ -23,26 +22,26 @@ public class HandPickup : MonoBehaviour
 
     void FixedUpdate()
     {
-        if ( isHolding && heldBall != null )
+        if (isHolding && heldBall != null)
         {
-            heldBall.MovePosition( targetPosition );
-            heldBall.MoveRotation( targetRotation );
+            heldBall.MovePosition(targetPosition);
+            heldBall.MoveRotation(targetRotation);
         }
     }
 
-    void OnTriggerEnter( Collider other )
+    void OnTriggerEnter(Collider other)
     {
-        if ( !isHolding && other.CompareTag( ballTag ) )
+        if (!isHolding && other.CompareTag(ballTag))
         {
             Rigidbody rb = other.attachedRigidbody;
-            if ( rb != null )
+            if (rb != null)
             {
-                Pickup( rb );
+                Pickup(rb);
             }
         }
     }
 
-    private void Pickup( Rigidbody rb )
+    private void Pickup(Rigidbody rb)
     {
         heldBall = rb;
         heldBall.useGravity = false;
@@ -50,9 +49,10 @@ public class HandPickup : MonoBehaviour
         heldBall.angularVelocity = Vector3.zero;
 
         isHolding = true;
-
-        if ( anim != null )
-            anim.SetTrigger( "Grab" );
+        if (anim != null)
+        {
+            anim.SetTrigger("Grab");
+        }
     }
 
     public bool IsHoldingBall()
@@ -62,7 +62,7 @@ public class HandPickup : MonoBehaviour
 
     public Rigidbody ReleaseBall()
     {
-        if ( !isHolding || heldBall == null )
+        if (!isHolding || heldBall == null)
             return null;
 
         Rigidbody released = heldBall;
@@ -71,9 +71,33 @@ public class HandPickup : MonoBehaviour
         heldBall = null;
         isHolding = false;
 
-        if ( anim != null )
-            anim.SetTrigger( "Release" );
+        if (anim != null)
+        {
+            anim.SetTrigger("Release");
+        }
 
         return released;
+    }
+
+    public void DestroyHeldBall()
+    {
+        if (!isHolding || heldBall == null)
+        {
+            return;
+        }
+
+        Rigidbody ballToDestroy = heldBall;
+        heldBall = null;
+        isHolding = false;
+
+        if (ballToDestroy != null)
+        {
+            Destroy(ballToDestroy.gameObject);
+        }
+        
+        if (anim != null)
+        {
+            anim.SetTrigger("Release");
+        }
     }
 }

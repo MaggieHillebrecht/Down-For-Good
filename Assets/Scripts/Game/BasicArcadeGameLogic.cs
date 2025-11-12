@@ -9,6 +9,7 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
     public event Action OnRoundSuccess;
     public event Action OnRoundFailed;
+    [SerializeField] private HandPickup playerHand;
 
     void Awake()
     {
@@ -26,6 +27,11 @@ public class BasicArcadeGameLogic : MonoBehaviour
     {
         isGameActive = true;
         ScoreManager.Instance.ResetScore();
+        
+        foreach (var pin in FindObjectsOfType<Pins>())
+        {
+            pin.ResetPin();
+        }
     }
 
     public void EndGameByTimer()
@@ -34,6 +40,11 @@ public class BasicArcadeGameLogic : MonoBehaviour
             return;
 
         isGameActive = false;
+
+        if (playerHand != null)
+        {
+            playerHand.DestroyHeldBall();
+        }
 
         if (ScoreManager.Instance.CurrentScore >= ScoreManager.Instance.ScoreGoal)
         {
@@ -55,4 +66,17 @@ public class BasicArcadeGameLogic : MonoBehaviour
         ScoreManager.Instance.StartNextRound();
         StartGame();
     }
+
+    public void ForceRoundSuccess()
+    {
+        isGameActive = false;
+        OnRoundSuccess?.Invoke();
+    }
+
+    public void ForceRoundFail()
+    {
+        isGameActive = false;
+        OnRoundFailed?.Invoke();
+    }
+
 }
