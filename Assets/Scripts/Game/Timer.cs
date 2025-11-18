@@ -40,6 +40,12 @@ public class Timer : MonoBehaviour
         BasicArcadeGameLogic.Instance.StartGame();
     }
 
+    public void AddTime(float extraSeconds)
+    {
+        timeRemaining += extraSeconds;
+        UpdateTimerUI();
+    }
+
     private void UpdateTimerUI()
     {
         if (timerText != null)

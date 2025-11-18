@@ -16,6 +16,8 @@ public class ScoreManager : MonoBehaviour
     private int scoreGoal;
 
     public int ScoreGoal => scoreGoal; 
+    public float scoreMultiplier { get; set; } = 1f;
+
 
     void Awake()
     {
@@ -46,14 +48,16 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreUI();
     }
 
-    public void StartNextRound()
+    public void StartRound(bool increaseGoal = true)
     {
-        // Increase goal for next round
-        scoreGoal += scoreGoalIncrement;
+        if (increaseGoal)
+            scoreGoal += scoreGoalIncrement;
+
         ResetScore();
+        UpdateScoreUI();
     }
 
-    private void UpdateScoreUI()
+    public void UpdateScoreUI()
     {
         if (scoreText != null)
             scoreText.text = $"Score: {CurrentScore} / {scoreGoal}";

@@ -11,6 +11,8 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private string lookToShopAnim = "LookToShop";
     [SerializeField] private string lookToGameAnim = "LookToGame";
     [SerializeField] private HandPickup playerHand;
+    [SerializeField] private Ability[] abilitiesForSale;
+
 
     private void OnEnable()
     {
@@ -19,7 +21,7 @@ public class ShopManager : MonoBehaviour
 
     private IEnumerator SubscribeWhenReady()
     {
-        while ( BasicArcadeGameLogic.Instance == null )
+        while (BasicArcadeGameLogic.Instance == null)
         {
             yield return null;
         }
@@ -31,7 +33,7 @@ public class ShopManager : MonoBehaviour
     private void OnDestroy()
     {
         // unsubscribes when destroyed
-        if ( BasicArcadeGameLogic.Instance != null )
+        if (BasicArcadeGameLogic.Instance != null)
         {
             BasicArcadeGameLogic.Instance.OnRoundSuccess -= HandleRoundSuccess;
             BasicArcadeGameLogic.Instance.OnRoundFailed -= HandleRoundFailed;
@@ -40,13 +42,13 @@ public class ShopManager : MonoBehaviour
 
     private void HandleRoundSuccess()
     {
-        StartCoroutine( PlayCameraAnimAndOpenShop() );
+        StartCoroutine(PlayCameraAnimAndOpenShop());
     }
 
     private void HandleRoundFailed()
     {
-        if ( hudUI != null ) hudUI.SetActive( false );
-        if ( loserScreen != null ) loserScreen.SetActive( true );
+        if (hudUI != null) hudUI.SetActive(false);
+        if (loserScreen != null) loserScreen.SetActive(true);
     }
 
     private IEnumerator PlayCameraAnimAndOpenShop()
@@ -81,53 +83,61 @@ public class ShopManager : MonoBehaviour
     public IEnumerator ReturnFromShop()
     {
         // Fade out the shop UI
-        if ( shopFader != null )
+        if (shopFader != null)
             shopFader.FadeOut();
 
-        if ( shopFader != null )
+        if (shopFader != null)
         {
-            yield return new WaitForSeconds( shopFader.fadeDuration );
+            yield return new WaitForSeconds(shopFader.fadeDuration);
         }
 
         // Play camera animation back to the game
-        if ( cameraAnimator != null && !string.IsNullOrEmpty( lookToGameAnim ) )
+        if (cameraAnimator != null && !string.IsNullOrEmpty(lookToGameAnim))
         {
-            cameraAnimator.Play( lookToGameAnim );
-            float animLength = GetAnimationClipLength( lookToGameAnim );
-            yield return new WaitForSeconds( animLength );
+            cameraAnimator.Play(lookToGameAnim);
+            float animLength = GetAnimationClipLength(lookToGameAnim);
+            yield return new WaitForSeconds(animLength);
         }
 
-        if ( timerInstance != null )
+        if (timerInstance != null)
             timerInstance.StartTimer();
 
-        if ( shopFader != null )
-            shopFader.gameObject.SetActive( false );
+        if (shopFader != null)
+            shopFader.gameObject.SetActive(false);
 
-        if ( hudUI != null )
-            hudUI.SetActive( true );
+        if (hudUI != null)
+            hudUI.SetActive(true);
 
         BasicArcadeGameLogic.Instance.StartGame();
     }
 
     public void ExitShopAndReturnToGame()
     {
-        StartCoroutine( ReturnFromShop() );
+        StartCoroutine(ReturnFromShop());
     }
 
-    private float GetAnimationClipLength( string clipName )
+    private float GetAnimationClipLength(string clipName)
     {
-        if ( cameraAnimator == null )
+        if (cameraAnimator == null)
         {
-            return 0f;    
-        } 
+            return 0f;
+        }
 
-        foreach ( var clip in cameraAnimator.runtimeAnimatorController.animationClips )
+        foreach (var clip in cameraAnimator.runtimeAnimatorController.animationClips)
         {
-            if ( clip.name == clipName )
+            if (clip.name == clipName)
                 return clip.length;
         }
 
         return 0f;
     }
-    
+    public void BuyAbility(int index)
+    {
+        if (index < 0 || index >= abilitiesForSale.Length)
+            return;
+
+        Ability ability = abilitiesForSale[index];
+
+        ability.ApplyAbility();
+    }
 }

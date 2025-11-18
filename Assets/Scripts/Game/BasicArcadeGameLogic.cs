@@ -63,7 +63,7 @@ public class BasicArcadeGameLogic : MonoBehaviour
 
     public void ExitShopAndStartNextRound()
     {
-        ScoreManager.Instance.StartNextRound();
+        ScoreManager.Instance.StartRound(true);
         StartGame();
     }
 
