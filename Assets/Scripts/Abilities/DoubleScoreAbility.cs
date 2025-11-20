@@ -1,3 +1,6 @@
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "DoubleScoreAbility", menuName = "Scriptable Objects/DoubleScoreAbility")]
 public class DoubleScoreAbility : Ability
 {
     public float multiplier = 2f;
@@ -7,4 +10,3 @@ public class DoubleScoreAbility : Ability
         ScoreManager.Instance.scoreMultiplier *= multiplier;
     }
 }
-

@@ -12,6 +12,8 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private string lookToGameAnim = "LookToGame";
     [SerializeField] private HandPickup playerHand;
     [SerializeField] private Ability[] abilitiesForSale;
+    private Ability lastPurchasedAbility;
+
 
 
     private void OnEnable()
@@ -82,33 +84,23 @@ public class ShopManager : MonoBehaviour
 
     public IEnumerator ReturnFromShop()
     {
-        // Fade out the shop UI
         if (shopFader != null)
             shopFader.FadeOut();
+        yield return new WaitForSeconds(shopFader.fadeDuration);
 
-        if (shopFader != null)
-        {
-            yield return new WaitForSeconds(shopFader.fadeDuration);
-        }
-
-        // Play camera animation back to the game
         if (cameraAnimator != null && !string.IsNullOrEmpty(lookToGameAnim))
         {
             cameraAnimator.Play(lookToGameAnim);
-            float animLength = GetAnimationClipLength(lookToGameAnim);
-            yield return new WaitForSeconds(animLength);
+            yield return new WaitForSeconds(GetAnimationClipLength(lookToGameAnim));
         }
 
-        if (timerInstance != null)
-            timerInstance.StartTimer();
+        timerInstance.StartTimer();
+        lastPurchasedAbility?.ApplyAbility();
 
-        if (shopFader != null)
-            shopFader.gameObject.SetActive(false);
+        shopFader.gameObject.SetActive(false);
+        hudUI.SetActive(true);
 
-        if (hudUI != null)
-            hudUI.SetActive(true);
-
-        BasicArcadeGameLogic.Instance.StartGame();
+        BasicArcadeGameLogic.Instance.ExitShopAndStartNextRound();
     }
 
     public void ExitShopAndReturnToGame()
@@ -136,8 +128,11 @@ public class ShopManager : MonoBehaviour
         if (index < 0 || index >= abilitiesForSale.Length)
             return;
 
-        Ability ability = abilitiesForSale[index];
+        lastPurchasedAbility = abilitiesForSale[index];
 
-        ability.ApplyAbility();
+        if (lastPurchasedAbility is ExtraTimeAbility extraTimeAbility)
+        {
+            extraTimeAbility.SetTimer(timerInstance);
+        }
     }
 }

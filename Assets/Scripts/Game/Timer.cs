@@ -11,6 +11,7 @@ public class Timer : MonoBehaviour
 
     private float timeRemaining;
     private bool timerRunning = false;
+    public float pendingBonusTime = 0f;
 
     void Start()
     {
@@ -36,13 +37,22 @@ public class Timer : MonoBehaviour
     public void StartTimer()
     {
         timeRemaining = gameDuration;
+
+        if (pendingBonusTime != 0f)
+        {
+            timeRemaining += pendingBonusTime;
+            pendingBonusTime = 0f;
+        }
+
         timerRunning = true;
         BasicArcadeGameLogic.Instance.StartGame();
+        UpdateTimerUI();
     }
 
-    public void AddTime(float extraSeconds)
+    public void AddTime(float amount)
     {
-        timeRemaining += extraSeconds;
+        Debug.Log("Adding time: " + amount);
+        timeRemaining += amount;
         UpdateTimerUI();
     }
 

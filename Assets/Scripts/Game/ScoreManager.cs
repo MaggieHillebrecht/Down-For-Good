@@ -38,7 +38,9 @@ public class ScoreManager : MonoBehaviour
         if (!BasicArcadeGameLogic.Instance.IsGameActive())
             return;
 
-        CurrentScore += amount;
+        int finalAmount = Mathf.RoundToInt(amount * scoreMultiplier);
+
+        CurrentScore += finalAmount;
         UpdateScoreUI();
     }
 
