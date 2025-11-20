@@ -4,12 +4,10 @@ using System;
 public class BasicArcadeGameLogic : MonoBehaviour
 {
     public static BasicArcadeGameLogic Instance;
-
-    private bool isGameActive = false;
-
     public event Action OnRoundSuccess;
     public event Action OnRoundFailed;
     [SerializeField] private HandPickup playerHand;
+    private bool isGameActive = false;
 
     void Awake()
     {
@@ -64,6 +62,7 @@ public class BasicArcadeGameLogic : MonoBehaviour
     public void ExitShopAndStartNextRound()
     {
         ScoreManager.Instance.StartRound(true);
+        RoundTracker.Instance.StartNextRound();
         StartGame();
     }
 
